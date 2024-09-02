@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Upload an Image</h1>
+    <button id="fetchThemes">Fetch Available Themes</button>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*" required>
+        <select name="theme" id="themeSelect" required>
+            <option value="">Select a theme</option>
+        </select>
+        <input type="text" name="newTheme" id="newTheme" placeholder="Or enter a new theme (e.g., flowers/wild)">
+        <button type="submit">Upload</button>
+    </form>
+
+    <script>
+        document.getElementById('fetchThemes').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/themes');
+                const themes = await response.json();
+                const select = document.getElementById('themeSelect');
+                select.innerHTML = '<option value="">Select a theme</option>';
+                themes.forEach(theme => {
+                    const option = document.createElement('option');
+                    option.value = theme;
+                    option.textContent = theme;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching themes:', error);
+                alert('Failed to fetch themes. Please try again.');
+            }
+        });
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const themeSelect = document.getElementById('themeSelect');
+            const newTheme = document.getElementById('newTheme');
+            
+            if (themeSelect.value === '' && newTheme.value === '') {
+                e.preventDefault();
+                alert('Please select an existing theme or enter a new one.');
+            } else if (newTheme.value !== '') {
+                themeSelect.disabled = true;
+            } else {
+                newTheme.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>
