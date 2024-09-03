@@ -30,9 +30,10 @@ app.post('/api/upload', upload.single('image'), async (req, res) => {
 
   try {
     const theme = req.body.theme;
-    
+
     // Check if the theme exists
     const themeDir = path.join(NFS_ROOT, theme);
+    console.log("themes: ",  themeDir);
     try {
       await fs.access(themeDir);
     } catch (error) {
