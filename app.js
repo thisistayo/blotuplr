@@ -7,7 +7,7 @@ const fs = require('fs').promises;
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
-const NFS_ROOT = '/Volumes/ccb-2t/images/blotpix'; // Update this to your NFS root path
+const NFS_ROOT = '/mnt/nfs/ccb/img/blotpix'; // Update this to your NFS root path
 
 app.use(express.static('public'));
 app.use(express.json());
