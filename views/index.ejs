@@ -3,53 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Upload</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <title>Upload Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Upload an Image</h1>
-    <button id="fetchThemes">Fetch Available Themes</button>
-    <form action="/upload" method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*" required>
-        <select name="theme" id="themeSelect" required>
-            <option value="">Select a theme</option>
-        </select>
-        <input type="text" name="newTheme" id="newTheme" placeholder="Or enter a new theme (e.g., flowers/wild)">
-        <button type="submit">Upload</button>
-    </form>
-
-    <script>
-        document.getElementById('fetchThemes').addEventListener('click', async () => {
-            try {
-                const response = await fetch('/themes');
-                const themes = await response.json();
-                const select = document.getElementById('themeSelect');
-                select.innerHTML = '<option value="">Select a theme</option>';
-                themes.forEach(theme => {
-                    const option = document.createElement('option');
-                    option.value = theme;
-                    option.textContent = theme;
-                    select.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Error fetching themes:', error);
-                alert('Failed to fetch themes. Please try again.');
-            }
-        });
-
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const themeSelect = document.getElementById('themeSelect');
-            const newTheme = document.getElementById('newTheme');
-            
-            if (themeSelect.value === '' && newTheme.value === '') {
-                e.preventDefault();
-                alert('Please select an existing theme or enter a new one.');
-            } else if (newTheme.value !== '') {
-                themeSelect.disabled = true;
-            } else {
-                newTheme.disabled = true;
-            }
-        });
-    </script>
+    <div class="container mt-5">
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="newTheme" class="form-label">Enter the theme:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" name="newTheme" id="newTheme" placeholder="e.g., 2024/08">
+                    <button class="btn btn-outline-secondary" type="button" id="smallButton">Action</button>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success">Upload</button>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
