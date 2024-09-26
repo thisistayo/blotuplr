@@ -2,6 +2,8 @@ const express = require('express');
 const multer = require('multer');
 const Minio = require('minio');
 const cors = require('cors');
+const path = require('path');
+const sharp = require('sharp'); // Import sharp for image processing
 
 const app = express();
 const port = 3000;
@@ -13,25 +15,66 @@ app.use(cors());
 const minioClient = new Minio.Client({
     endPoint: 'objects.hbvu.su',
     port: 443,
-    useSSL: true, // Set to true if using HTTPS
+    useSSL: true,
     accessKey: 'lucarv',
     secretKey: 'lucaPWD$MinI0'
 });
 
+// Store buckets in memory
+let bucketsList = [];
+
+// Function to fetch buckets from MinIO
+const fetchBuckets = async () => {
+    try {
+        bucketsList = await minioClient.listBuckets();
+        console.log('Buckets fetched:', bucketsList);
+    } catch (err) {
+        console.error('Error fetching buckets:', err);
+    }
+};
+
+// Call the function to fetch buckets on server start
+fetchBuckets();
+
 // Configure multer for file uploads
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Endpoint to upload files
-app.post('/upload', upload.single('file'), (req, res) => {
-    const file = req.file;
-    const bucketName = 'your-bucket-name'; // Specify your bucket name
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
-    minioClient.putObject(bucketName, file.originalname, file.buffer, (err, etag) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        res.send(`File uploaded successfully. ETag: ${etag}`);
-    });
+// Serve index.html on GET request to '/'
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Endpoint to get the list of buckets
+app.get('/buckets', (req, res) => {
+    res.json(bucketsList);
+});
+
+// Endpoint to upload files with resizing
+app.post('/upload', upload.single('file'), async (req, res) => {
+    const file = req.file;
+    const bucketName = req.body.bucketName; 
+    const folderPath = req.body.folderPath; 
+    const newFileName = req.body.newFileName || file.originalname; // Use original name if no new name is provided
+
+    try {
+        // Resize the image to 1920x1920 pixels using sharp
+        const resizedImageBuffer = await sharp(file.buffer)
+            .resize(1920, 1920, { fit: 'inside' })
+            .toBuffer();
+
+        // Construct the full object name using the folder path and file name
+        const objectName = `${folderPath}/${newFileName}`;
+
+        // Upload the resized image buffer to MinIO
+        await minioClient.putObject(bucketName, objectName, resizedImageBuffer);
+
+        res.send(`File uploaded successfully to ${bucketName}/${objectName}.`);
+    } catch (err) {
+        return res.status(500).send(err);
+    }
 });
 
 app.listen(port, () => {

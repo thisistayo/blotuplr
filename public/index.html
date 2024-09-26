@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload to MinIO</title>
+    
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Upload File to MinIO</h1>
+    
+    <form id="uploadForm">
+        <label for="buckets">Select Bucket:</label>
+        <select id="buckets"></select>
+
+        <label for="folderPath">Folder Path:</label>
+        <input type="text" id="folderPath" name="folderPath" placeholder="e.g., 20024/01" required />
+
+        <label for="newFileName">New File Name (optional):</label>
+        <input type="text" id="newFileName" name="newFileName" placeholder="Enter new file name" />
+
+        <label for="file">Select File:</label>
+        <input type="file" name="file" required />
+
+        <button type="submit">Upload</button>
+    </form>
+
+    <div id="response"></div>
+
+   <!-- Link to external JavaScript -->
+   <script src="script.js"></script>
+</body>
+</html>
