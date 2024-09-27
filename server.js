@@ -6,7 +6,7 @@ const path = require('path');
 const sharp = require('sharp'); // Import sharp for image processing
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 // Enable CORS
 app.use(cors());
@@ -27,7 +27,8 @@ let bucketsList = [];
 const fetchBuckets = async () => {
     try {
         bucketsList = await minioClient.listBuckets();
-        console.log('Buckets fetched:', bucketsList);
+        const bucketNames = bucketsList.map(bucket => bucket.name);
+        console.log('Bucket names:', bucketNames);
     } catch (err) {
         console.error('Error fetching buckets:', err);
     }
@@ -55,9 +56,14 @@ app.get('/buckets', (req, res) => {
 // Endpoint to upload files with resizing
 app.post('/upload', upload.single('file'), async (req, res) => {
     const file = req.file;
-    const bucketName = req.body.bucketName; 
-    const folderPath = req.body.folderPath; 
-    const newFileName = req.body.newFileName || file.originalname; // Use original name if no new name is provided
+    console.log(req.body); // Log the entire body for debugging
+    const bucketName = req.body.bucketName;
+    const folderPath = req.body.folderPath;
+    const newFileName = req.body.newFileName || file.originalname;
+
+    if (!bucketName) {
+        return res.status(400).send('Bucket name is required');
+    }
 
     try {
         // Resize the image to 1920x1920 pixels using sharp
@@ -68,12 +74,15 @@ app.post('/upload', upload.single('file'), async (req, res) => {
         // Construct the full object name using the folder path and file name
         const objectName = `${folderPath}/${newFileName}`;
 
+        console.log(`Uploading to bucket: ${bucketName}, object: ${objectName}`); // Log for debugging
+
         // Upload the resized image buffer to MinIO
         await minioClient.putObject(bucketName, objectName, resizedImageBuffer);
 
         res.send(`File uploaded successfully to ${bucketName}/${objectName}.`);
     } catch (err) {
-        return res.status(500).send(err);
+        console.error('Error during upload:', err); // Log the full error
+        return res.status(500).send(err.message);
     }
 });
 

@@ -1,64 +1,88 @@
-// script.js
-async function fetchBuckets() {
-    try {
-        const response = await fetch('http://localhost:3000/buckets');
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const buckets = await response.json();
-        const bucketSelect = document.getElementById('buckets');
+document.addEventListener('DOMContentLoaded', function () {
+    const bucketSelect = document.getElementById('buckets');
+    const yearSelect = document.getElementById('yearSelect');
+    const monthSelect = document.getElementById('monthSelect');
+    const uploadForm = document.getElementById('uploadForm');
 
-        // Clear existing options
-        bucketSelect.innerHTML = '';
-
-        // Populate the select dropdown with bucket names
-        if (buckets.length > 0) {
+    // Fetch buckets from the server
+    async function fetchBuckets() {
+        try {
+            const response = await fetch('http://localhost:3001/buckets');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const buckets = await response.json();
+            console.log(buckets)
             buckets.forEach(bucket => {
                 const option = document.createElement('option');
                 option.value = bucket.name;
                 option.textContent = bucket.name;
                 bucketSelect.appendChild(option);
             });
-        } else {
-            // If no buckets are available, show a message
-            const option = document.createElement('option');
-            option.value = '';
-            option.textContent = 'No buckets available';
-            bucketSelect.appendChild(option);
+        } catch (error) {
+            console.error('Error fetching buckets:', error);
         }
-    } catch (error) {
-        console.error('Error fetching buckets:', error);
     }
-}
 
-document.getElementById('uploadForm').onsubmit = async function(event) {
-    event.preventDefault();
-    const formData = new FormData(this);
-    const bucketName = document.getElementById('buckets').value; // Get selected bucket name
-    const folderPath = document.getElementById('folderPath').value; // Get folder path
-    const newFileName = document.getElementById('newFileName').value; // Get new file name
-    const responseDiv = document.getElementById('response');
-
-    // Append the selected bucket name, folder path, and new file name to the form data
-    formData.append('bucketName', bucketName);
-    formData.append('folderPath', folderPath);
-    formData.append('newFileName', newFileName);
-
-    try {
-        const response = await fetch('http://localhost:3000/upload', {
-            method: 'POST',
-            body: formData,
-        });
-        const result = await response.text();
-        responseDiv.innerText = result;
-        responseDiv.style.color = '#28a745'; // Green color for success
-        responseDiv.style.textAlign = 'center';
-    } catch (error) {
-        responseDiv.innerText = 'Error uploading file.';
-        responseDiv.style.color = '#dc3545'; // Red color for error
-        responseDiv.style.textAlign = 'center';
+    // Populate year dropdown
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear; year >= currentYear - 10; year--) {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
     }
-};
 
-// Call fetchBuckets on page load
-window.onload = fetchBuckets;
+    // Populate month dropdown
+    const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    months.forEach((month, index) => {
+        const option = document.createElement('option');
+        option.value = (index + 1).toString().padStart(2, '0'); // 01, 02, ..., 12
+        option.textContent = month;
+        monthSelect.appendChild(option);
+    });
+
+    // Set default to current year and month
+    const currentDate = new Date();
+    yearSelect.value = currentDate.getFullYear();
+    monthSelect.value = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+
+    // Handle form submission
+    uploadForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+
+        // Get the selected bucket
+        const selectedBucket = document.getElementById('buckets').value;
+
+        // Construct the folder path
+        const folderPath = `${formData.get('year')}/${formData.get('month')}`;
+        formData.append('bucketName', selectedBucket);
+        formData.append('folderPath', folderPath);
+
+        // Remove individual year and month from formData
+        formData.delete('year');
+        formData.delete('month');
+
+        console.log('This is the form data on the client side')
+        console.log(formData);
+
+        try {
+            const response = await fetch('http://localhost:3001/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.text();
+            document.getElementById('response').textContent = result;
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('response').textContent = 'Error uploading file.';
+        }
+    });
+
+    // Call fetchBuckets to populate the bucket dropdown
+    fetchBuckets();
+});
