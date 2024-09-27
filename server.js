@@ -6,7 +6,7 @@ const path = require('path');
 const sharp = require('sharp'); // Import sharp for image processing
 
 const app = express();
-const port = 3001;
+const port = 3000;
 
 // Enable CORS
 app.use(cors());

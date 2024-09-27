@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Fetch buckets from the server
     async function fetchBuckets() {
         try {
-            const response = await fetch('http://localhost:3001/buckets');
+            const response = await fetch('http://localhost:3000/buckets');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(formData);
 
         try {
-            const response = await fetch('http://localhost:3001/upload', {
+            const response = await fetch('http://localhost:3000/upload', {
                 method: 'POST',
                 body: formData
             });
