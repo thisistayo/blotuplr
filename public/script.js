@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(formData);
 
         try {
-            const response = await fetch('http://https://blotuplr.hbvu.su/upload', {
+            const response = await fetch('https://blotuplr.hbvu.su/upload', {
                 method: 'POST',
                 body: formData
             });
