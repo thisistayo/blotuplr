@@ -7,12 +7,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Fetch buckets from the server
     async function fetchBuckets() {
         try {
-            const response = await fetch('http://localhost:3000/buckets');
+            const response = await fetch('https://blotuplr.hbvu.su/buckets');
             if (!response.ok) {
+
                 throw new Error('Network response was not ok');
             }
             const buckets = await response.json();
-            console.log(buckets)
             buckets.forEach(bucket => {
                 const option = document.createElement('option');
                 option.value = bucket.name;
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(formData);
 
         try {
-            const response = await fetch('http://localhost:3000/upload', {
+            const response = await fetch('http://https://blotuplr.hbvu.su/upload', {
                 method: 'POST',
                 body: formData
             });
