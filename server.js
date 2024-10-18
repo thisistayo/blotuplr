@@ -11,6 +11,9 @@ const port = 3000;
 // Enable CORS
 app.use(cors());
 
+app.use(express.json({ limit: '50mb' })); // Increase the JSON payload size limit
+app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase the URL-encoded payload size limit
+
 // Setup MinIO client
 const minioClient = new Minio.Client({
     endPoint: 'objects.hbvu.su',
@@ -38,8 +41,10 @@ const fetchBuckets = async () => {
 fetchBuckets();
 
 // Configure multer for file uploads
-const upload = multer({ storage: multer.memoryStorage() });
-
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 10 * 1024 * 1024 } // Set file size limit to 10 MB (adjust as needed)
+});
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -55,6 +60,9 @@ app.get('/buckets', (req, res) => {
 
 // Endpoint to upload files with resizing
 app.post('/upload', upload.single('file'), async (req, res) => {
+    console.log('File size:', req.file.size); // Log file size
+    console.log('Request body:', req.body); // Log request body
+    
     const file = req.file;
     console.log(req.body); // Log the entire body for debugging
     const bucketName = req.body.bucketName;
