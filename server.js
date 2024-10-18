@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 });
 
 // Endpoint to get the list of buckets
-app.get('/buckets', (req, res) => {
+app.get('/buckets', async (req, res) => {
     const defaultBuckets = ['blotpix', 'test'];
 
     try {
@@ -50,7 +50,8 @@ app.get('/buckets', (req, res) => {
         console.error('Error fetching buckets:', err);
         console.log('Using default buckets due to error');
         res.json(defaultBuckets);
-    });
+    }
+});
 
 // Endpoint to upload files with resizing
 app.post('/upload', upload.single('file'), async (req, res) => {
