@@ -16,9 +16,9 @@ app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase the 
 
 // Setup MinIO client
 const minioClient = new Minio.Client({
-    endPoint: 'objects.hbvu.su',
-    port: 443,
-    useSSL: true,
+    endPoint: 'minio-service.minio.svc.cluster.local',
+    port: 9000,
+    useSSL: false,
     accessKey: 'lucarv',
     secretKey: 'lucaPWD$MinI0'
 });
@@ -62,7 +62,7 @@ app.get('/buckets', (req, res) => {
 app.post('/upload', upload.single('file'), async (req, res) => {
     console.log('File size:', req.file.size); // Log file size
     console.log('Request body:', req.body); // Log request body
-    
+
     const file = req.file;
     console.log(req.body); // Log the entire body for debugging
     const bucketName = req.body.bucketName;
