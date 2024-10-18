@@ -24,7 +24,7 @@ const minioClient = new Minio.Client({
 });
 
 // Store buckets in memory
-let bucketsList = [];
+let bucketsList = ['blotpix'];
 
 // Function to fetch buckets from MinIO
 const fetchBuckets = async () => {

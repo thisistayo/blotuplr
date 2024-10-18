@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch('https://blotuplr.hbvu.su/buckets');
             if (!response.ok) {
-
                 throw new Error('Network response was not ok');
             }
             const buckets = await response.json();
