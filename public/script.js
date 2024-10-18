@@ -7,19 +7,42 @@ document.addEventListener('DOMContentLoaded', function () {
     // Fetch buckets from the server
     async function fetchBuckets() {
         try {
+            console.log('Fetching buckets...');
             const response = await fetch('https://blotuplr.hbvu.su/buckets');
+            console.log('Response status:', response.status);
+            
             if (!response.ok) {
-                console.log('unable to fetch buckets')
-                throw new Error('Network response was not ok');
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+            
             const buckets = await response.json();
+            console.log('Received buckets:', buckets);
+            
+            if (!Array.isArray(buckets)) {
+                throw new Error('Received data is not an array');
+            }
+            
+            if (buckets.length === 0) {
+                console.log('No buckets received');
+                return;
+            }
+            
             buckets.forEach(bucket => {
                 const option = document.createElement('option');
-                option.value = bucket.name;
-                option.textContent = bucket.name;
+                if (typeof bucket === 'string') {
+                    option.value = bucket;
+                    option.textContent = bucket;
+                } else if (bucket && typeof bucket === 'object' && bucket.name) {
+                    option.value = bucket.name;
+                    option.textContent = bucket.name;
+                } else {
+                    console.error('Invalid bucket format:', bucket);
+                    return;
+                }
                 bucketSelect.appendChild(option);
             });
-            console.log(bucketSelect)
+            
+            console.log('Buckets added to select:', bucketSelect.options.length);
         } catch (error) {
             console.error('Error fetching buckets:', error);
         }
