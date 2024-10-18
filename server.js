@@ -23,8 +23,10 @@ const minioClient = new Minio.Client({
     secretKey: 'lucaPWD$MinI0'
 });
 
+let bucketsList = ['blotpix'];
+
 // Configure multer for file uploads
-const upload = multer({ 
+const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: 10 * 1024 * 1024 } // Set file size limit to 10 MB (adjust as needed)
 });
@@ -38,8 +40,17 @@ app.get('/', (req, res) => {
 
 // Endpoint to get the list of buckets
 app.get('/buckets', (req, res) => {
-    res.json(bucketsList);
-});
+    const defaultBuckets = ['blotpix', 'test'];
+
+    try {
+        const buckets = await minioClient.listBuckets();
+        const bucketNames = buckets.map(bucket => bucket.name);
+        res.json(bucketNames);
+    } catch (err) {
+        console.error('Error fetching buckets:', err);
+        console.log('Using default buckets due to error');
+        res.json(defaultBuckets);
+    });
 
 // Endpoint to upload files with resizing
 app.post('/upload', upload.single('file'), async (req, res) => {
