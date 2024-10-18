@@ -23,26 +23,6 @@ const minioClient = new Minio.Client({
     secretKey: 'lucaPWD$MinI0'
 });
 
-// Store buckets in memory
-let bucketsList = [];
-
-// Function to fetch buckets from MinIO
-const fetchBuckets = async () => {
-    try {
-        bucketsList = await minioClient.listBuckets();
-        const bucketNames = bucketsList.map(bucket => bucket.name);
-        console.log('Bucket names:', bucketNames);
-    } catch (err) {
-        console.error('Error fetching buckets:', err);
-    }
-};
-
-// Call the function to fetch buckets on server start
-fetchBuckets();
-
-if (bucketsList.length < 1)
-    bucketsList = ['blotpix']
-
 // Configure multer for file uploads
 const upload = multer({ 
     storage: multer.memoryStorage(),

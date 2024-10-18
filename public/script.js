@@ -5,25 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const uploadForm = document.getElementById('uploadForm');
 
     // Fetch buckets from the server
-    async function fetchBuckets() {
-        try {
-            const response = await fetch('https://blotuplr.hbvu.su/buckets');
-            if (!response.ok) {
-                console.log('unable to fetch buckets')
-                throw new Error('Network response was not ok');
-            }
-            const buckets = await response.json();
-            buckets.forEach(bucket => {
-                const option = document.createElement('option');
-                option.value = bucket.name;
-                option.textContent = bucket.name;
-                bucketSelect.appendChild(option);
-            });
-            console.log(bucketSelect)
-        } catch (error) {
-            console.error('Error fetching buckets:', error);
-        }
-    }
+    bucketSelect = ['blotpix', 'test']
 
     // Populate year dropdown
     const currentYear = new Date().getFullYear();
