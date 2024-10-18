@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch('https://blotuplr.hbvu.su/buckets');
             if (!response.ok) {
+                console.log('unable to fetch buckets')
                 throw new Error('Network response was not ok');
             }
             const buckets = await response.json();
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 option.textContent = bucket.name;
                 bucketSelect.appendChild(option);
             });
+            console.log(bucketSelect)
         } catch (error) {
             console.error('Error fetching buckets:', error);
         }

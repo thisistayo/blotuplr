@@ -24,7 +24,7 @@ const minioClient = new Minio.Client({
 });
 
 // Store buckets in memory
-let bucketsList = ['blotpix'];
+let bucketsList = [];
 
 // Function to fetch buckets from MinIO
 const fetchBuckets = async () => {
@@ -39,6 +39,9 @@ const fetchBuckets = async () => {
 
 // Call the function to fetch buckets on server start
 fetchBuckets();
+
+if (bucketsList.length < 1)
+    bucketsList = ['blotpix']
 
 // Configure multer for file uploads
 const upload = multer({ 
