@@ -66,10 +66,12 @@ app.post('/', upload.single('file'), async (req, res) => {
     const bucketName = req.body.bucket;
     const folderPath = req.body.path || '';
     const newFileName = req.body.newFileName;
+    const resize = req.body.resize;
     console.log('This comes from the FE');
     console.log(req.body)
 
     if (!bucketName) {
+        console.log
         return res.status(400).json({ error: 'Bucket name is required' });
     }
 
