@@ -42,7 +42,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve index.html on GET request to '/'
 app.get('/', (req, res) => {
-    res.sendFile('blotpix uploader and nothing else');
+    res.json({blotpix_uploader: 'nothing else'});
 });
 
 // Endpoint to get the list of buckets
