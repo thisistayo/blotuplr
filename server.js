@@ -1,3 +1,5 @@
+require('dotenv').config()
+console.log(process.env)
 const express = require('express');
 const multer = require('multer');
 const Minio = require('minio');
@@ -15,13 +17,18 @@ app.use(express.json({ limit: '50mb' })); // Increase the JSON payload size limi
 app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase the URL-encoded payload size limit
 
 // Setup MinIO client
-const minioClient = new Minio.Client({
-    endPoint: process.env.S3_ENDPOINT,
-    port: process.env.S3_PORT || 443,
-    useSSL: process.env.S3_USE_SSL !== 'false',
-    accessKey: process.env.S3_ACCESS_KEY,
-    secretKey: process.env.S3_SECRET_KEY
-});
+let minioConfig = {
+    endPoint: process.env.MINIO_ENDPOINT || 'minio-service.minio.svc.cluster.local',
+    port: 9000,
+    useSSL: false,
+    accessKey: process.env.MINIO_ACCESS_KEY || 'lucarv',
+    secretKey: process.env.MINIO_SECRET_KEY || 'lucaPWD$MinI0'
+}
+
+console.log('CONFIG MINIO WITH')
+console.log(minioConfig);
+
+const minioClient = new Minio.Client(minioConfig);
 
 let bucketsList = ['blotpix'];
 
@@ -57,11 +64,8 @@ app.get('/', async (req, res) => {
 app.post('/', upload.single('file'), async (req, res) => {
     const file = req.file;
     const bucketName = req.body.bucket;
-    const folderPath = req.body.path || '';
-    const newFileName = req.body.newFileName || file.originalname;
-    const resize = req.body.resize === 'true';
-    const resizeWidth = parseInt(req.body.resizeWidth) || 1920;
-    const resizeHeight = parseInt(req.body.resizeHeight) || 1920;
+    const folderPath = req.body.path;
+    const newFileName = req.body.newFileName;
 
     if (!bucketName) {
         return res.status(400).json({ error: 'Bucket name is required' });
@@ -72,7 +76,7 @@ app.post('/', upload.single('file'), async (req, res) => {
 
         if (resize) {
             imageBuffer = await sharp(file.buffer)
-                .resize(resizeWidth, resizeHeight, { fit: 'inside' })
+                .resize(1920, 1920, { fit: 'inside' })
                 .toBuffer();
         }
 
