@@ -16,7 +16,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase the 
 
 // Setup MinIO client
 const minioClient = new Minio.Client({
-    endPoint: process.env.S3_ENDPOINT || 'your-s3-endpoint',
+    endPoint: process.env.S3_ENDPOINT || 'https://objects.hbvu.su',
     port: process.env.S3_PORT || 443,
     useSSL: process.env.S3_USE_SSL !== 'false',
     accessKey: process.env.S3_ACCESS_KEY,
@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 });
 
 // Endpoint to get the list of buckets
-app.get('/buckets', async (req, res) => {
+app.get('/', async (req, res) => {
     const defaultBuckets = ['blotpix', 'test'];
 
     try {
@@ -54,7 +54,7 @@ app.get('/buckets', async (req, res) => {
 });
 
 // Endpoint to upload files with resizing
-app.post('/api/upload', upload.single('file'), async (req, res) => {
+app.post('/', upload.single('file'), async (req, res) => {
     const file = req.file;
     const bucketName = req.body.bucket;
     const folderPath = req.body.path || '';
