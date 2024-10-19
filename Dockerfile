@@ -12,7 +12,6 @@ COPY package*.json ./
 RUN npm install
 
 # Copy the rest of the application code
-COPY public ./public
 COPY server.js .
 
 # Expose the port your app runs on (adjust if necessary)

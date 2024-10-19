@@ -16,11 +16,11 @@ app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase the 
 
 // Setup MinIO client
 const minioClient = new Minio.Client({
-    endPoint: 'minio-service.minio.svc.cluster.local',
-    port: 9000,
-    useSSL: false,
-    accessKey: 'lucarv',
-    secretKey: 'lucaPWD$MinI0'
+    endPoint: process.env.S3_ENDPOINT || 'your-s3-endpoint',
+    port: process.env.S3_PORT || 443,
+    useSSL: process.env.S3_USE_SSL !== 'false',
+    accessKey: process.env.S3_ACCESS_KEY,
+    secretKey: process.env.S3_SECRET_KEY
 });
 
 let bucketsList = ['blotpix'];
@@ -54,38 +54,36 @@ app.get('/buckets', async (req, res) => {
 });
 
 // Endpoint to upload files with resizing
-app.post('/upload', upload.single('file'), async (req, res) => {
-    console.log('File size:', req.file.size); // Log file size
-    console.log('Request body:', req.body); // Log request body
-
+app.post('/api/upload', upload.single('file'), async (req, res) => {
     const file = req.file;
-    console.log(req.body); // Log the entire body for debugging
-    const bucketName = req.body.bucketName;
-    const folderPath = req.body.folderPath;
+    const bucketName = req.body.bucket;
+    const folderPath = req.body.path || '';
     const newFileName = req.body.newFileName || file.originalname;
+    const resize = req.body.resize === 'true';
+    const resizeWidth = parseInt(req.body.resizeWidth) || 1920;
+    const resizeHeight = parseInt(req.body.resizeHeight) || 1920;
 
     if (!bucketName) {
-        return res.status(400).send('Bucket name is required');
+        return res.status(400).json({ error: 'Bucket name is required' });
     }
 
     try {
-        // Resize the image to 1920x1920 pixels using sharp
-        const resizedImageBuffer = await sharp(file.buffer)
-            .resize(1920, 1920, { fit: 'inside' })
-            .toBuffer();
+        let imageBuffer = file.buffer;
 
-        // Construct the full object name using the folder path and file name
-        const objectName = `${folderPath}/${newFileName}`;
+        if (resize) {
+            imageBuffer = await sharp(file.buffer)
+                .resize(resizeWidth, resizeHeight, { fit: 'inside' })
+                .toBuffer();
+        }
 
-        console.log(`Uploading to bucket: ${bucketName}, object: ${objectName}`); // Log for debugging
+        const objectName = path.join(folderPath, newFileName);
 
-        // Upload the resized image buffer to MinIO
-        await minioClient.putObject(bucketName, objectName, resizedImageBuffer);
+        await minioClient.putObject(bucketName, objectName, imageBuffer);
 
-        res.send(`File uploaded successfully to ${bucketName}/${objectName}.`);
+        res.json({ message: `File uploaded successfully to ${bucketName}/${objectName}.` });
     } catch (err) {
-        console.error('Error during upload:', err); // Log the full error
-        return res.status(500).send(err.message);
+        console.error('Error during upload:', err);
+        res.status(500).json({ error: err.message });
     }
 });
 
