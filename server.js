@@ -66,6 +66,7 @@ app.post('/', upload.single('file'), async (req, res) => {
     const bucketName = req.body.bucket;
     const folderPath = req.body.path;
     const newFileName = req.body.newFileName;
+    console.log('This comes from the FE'):
     console.log(req.body)
 
     if (!bucketName) {
