@@ -16,7 +16,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase the 
 
 // Setup MinIO client
 const minioClient = new Minio.Client({
-    endPoint: process.env.S3_ENDPOINT || 'https://objects.hbvu.su',
+    endPoint: process.env.S3_ENDPOINT,
     port: process.env.S3_PORT || 443,
     useSSL: process.env.S3_USE_SSL !== 'false',
     accessKey: process.env.S3_ACCESS_KEY,
