@@ -33,6 +33,9 @@ minioClient.listBuckets((err, buckets) => {
   });
   
 const minioClient = new Minio.Client(minioConfig);
+
+console.log('Starting Minio')
+
 minioClient.setRequestOptions({debug: true});
 
 let bucketsList = ['blotpix'];
