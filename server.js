@@ -24,12 +24,16 @@ let minioConfig = {
     accessKey: process.env.MINIO_ACCESS_KEY || 'lucarv',
     secretKey: process.env.MINIO_SECRET_KEY || 'lucaPWD$MinI0'
 }
-minioClient.setRequestOptions({debug: true});
 
 console.log('CONFIG MINIO WITH')
 console.log(minioConfig);
-
+minioClient.listBuckets((err, buckets) => {
+    if (err) return console.log(err);
+    console.log('Buckets:', buckets);
+  });
+  
 const minioClient = new Minio.Client(minioConfig);
+minioClient.setRequestOptions({debug: true});
 
 let bucketsList = ['blotpix'];
 
