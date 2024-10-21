@@ -67,6 +67,7 @@ app.post('/login', async (req, res) => {
     console.log(req.body.password == process.env.MINIO_SECRET_KEY)
 
     if ((req.body.username == process.env.MINIO_ACCESS_KEY) && (req.body.password == process.env.MINIO_SECRET_KEY)) {
+        console.log('valid credentials sent')
         return res.status(200).json({ message: 'Login successful' });
     } else {
         return res.status(401).json({ message: 'Invalid username or password' });
