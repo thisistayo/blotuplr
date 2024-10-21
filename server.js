@@ -1,6 +1,6 @@
 require('dotenv').config()
 console.log(process.env)
-const express = require('express');
+//const express = require('express');
 const multer = require('multer');
 const Minio = require('minio');
 const cors = require('cors');
@@ -18,7 +18,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase the 
 
 // Setup MinIO client
 let minioConfig = {
-    endPoint: '192.168.1.200',
+    endPoint: 'mini-service.minio.svc.cluster.local',
     port: 9000,
     useSSL: false,
     accessKey: process.env.MINIO_ACCESS_KEY,
@@ -30,7 +30,6 @@ console.log(minioConfig);
 
 const minioClient = new Minio.Client(minioConfig);
 
-console.log('Starting Minio')
 
 minioClient.setRequestOptions({debug: true});
 
