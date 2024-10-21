@@ -1,6 +1,6 @@
 require('dotenv').config()
-console.log(process.env)
-//const express = require('express');
+//console.log(process.env)
+const express = require('express');
 const multer = require('multer');
 const Minio = require('minio');
 const cors = require('cors');
