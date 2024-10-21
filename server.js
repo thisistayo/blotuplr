@@ -18,12 +18,13 @@ app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase the 
 
 // Setup MinIO client
 let minioConfig = {
-    endPoint: process.env.MINIO_ENDPOINT || 'minio-service.minio.svc.cluster.local',
+    endPoint: '192.168.1.200',
     port: 9000,
     useSSL: false,
     accessKey: process.env.MINIO_ACCESS_KEY || 'lucarv',
     secretKey: process.env.MINIO_SECRET_KEY || 'lucaPWD$MinI0'
 }
+minioClient.setRequestOptions({debug: true});
 
 console.log('CONFIG MINIO WITH')
 console.log(minioConfig);
