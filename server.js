@@ -21,8 +21,8 @@ let minioConfig = {
     endPoint: '192.168.1.200',
     port: 9000,
     useSSL: false,
-    accessKey: process.env.MINIO_ACCESS_KEY || 'lucarv',
-    secretKey: process.env.MINIO_SECRET_KEY || 'lucaPWD$MinI0'
+    accessKey: process.env.MINIO_ACCESS_KEY,
+    secretKey: process.env.MINIO_SECRET_KEY'
 }
 
 console.log('CONFIG MINIO WITH')
@@ -62,8 +62,18 @@ app.get('/buckets', async (req, res) => {
     }
 });
 
+app.post('/login', async (req, res) => {
+    console.log(req.body.username == process.env.MINIO_ACCESS_KEY)
+    console.log(req.body.password == process.env.MINIO_SECRET_KEY)
+
+    if ((req.body.username == process.env.MINIO_ACCESS_KEY) && (req.body.password == process.env.MINIO_SECRET_KEY)) {
+        return res.status(200).json({ message: 'Login successful' });
+    } else {
+        return res.status(401).json({ message: 'Invalid username or password' });
+    }
+})
 // Endpoint to upload files with resizing
-app.post('/', upload.single('file'), async (req, res) => {
+app.post('/upload', upload.single('file'), async (req, res) => {
     const file = req.file;
     const bucketName = req.body.bucket;
     const folderPath = req.body.path || '';
