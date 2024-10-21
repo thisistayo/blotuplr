@@ -27,17 +27,17 @@ let minioConfig = {
 
 console.log('CONFIG MINIO WITH')
 console.log(minioConfig);
-minioClient.listBuckets((err, buckets) => {
-    if (err) return console.log(err);
-    console.log('Buckets:', buckets);
-  });
-  
+
 const minioClient = new Minio.Client(minioConfig);
 
 console.log('Starting Minio')
 
 minioClient.setRequestOptions({debug: true});
-
+minioClient.listBuckets((err, buckets) => {
+    if (err) return console.log(err);
+    console.log('Buckets:', buckets);
+  });
+  
 let bucketsList = ['blotpix'];
 
 // Configure multer for file uploads
