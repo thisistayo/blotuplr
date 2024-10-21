@@ -1,5 +1,7 @@
 require('dotenv').config()
 //console.log(process.env)
+console.log('accessKey: ' + process.env.MINIO_ACCESS_KEY);
+console.log('secretKey: ' + process.env.MINIO_SECRET_KEY);
 const express = require('express');
 const multer = require('multer');
 const Minio = require('minio');
@@ -12,7 +14,6 @@ const port = 3000;
 
 // Enable CORS
 app.use(cors());
-
 app.use(express.json({ limit: '50mb' })); // Increase the JSON payload size limit
 app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase the URL-encoded payload size limit
 
@@ -25,12 +26,10 @@ let minioConfig = {
     secretKey: process.env.MINIO_SECRET_KEY
 }
 
-console.log('CONFIG MINIO WITH')
+console.log(' -- CONFIG MINIO WITH -- ')
 console.log(minioConfig);
 
 const minioClient = new Minio.Client(minioConfig);
-
-
 minioClient.setRequestOptions({debug: true});
 
 // Configure multer for file uploads
