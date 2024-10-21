@@ -99,6 +99,9 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 
         const objectName = path.join(folderPath, newFileName);
 
+        console.log('BucketName: ' + bucketName);
+        console.log('objectName: ' + objectName);
+
         await minioClient.putObject(bucketName, objectName, imageBuffer);
 
         res.json({ message: `File uploaded successfully to ${bucketName}/${objectName}.` });
