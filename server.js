@@ -22,7 +22,7 @@ let minioConfig = {
     port: 9000,
     useSSL: false,
     accessKey: process.env.MINIO_ACCESS_KEY,
-    secretKey: process.env.MINIO_SECRET_KEY'
+    secretKey: process.env.MINIO_SECRET_KEY
 }
 
 console.log('CONFIG MINIO WITH')
