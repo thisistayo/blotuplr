@@ -33,12 +33,6 @@ const minioClient = new Minio.Client(minioConfig);
 console.log('Starting Minio')
 
 minioClient.setRequestOptions({debug: true});
-minioClient.listBuckets((err, buckets) => {
-    if (err) return console.log(err);
-    console.log('Buckets:', buckets);
-  });
-  
-let bucketsList = ['blotpix'];
 
 // Configure multer for file uploads
 const upload = multer({
@@ -54,7 +48,7 @@ app.get('/', (req, res) => {
 });
 
 // Endpoint to get the list of buckets
-app.get('/', async (req, res) => {
+app.get('/buckets', async (req, res) => {
     const defaultBuckets = ['blotpix', 'test'];
 
     try {
