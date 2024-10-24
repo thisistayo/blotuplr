@@ -20,7 +20,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true })); // Increase the 
 
 // Setup MinIO client
 let minioConfig = {
-    endPoint: '192.168.1.200',
+    endPoint: '192.168.1.201',
     port: 9000,
     useSSL: false,
     accessKey: process.env.MINIO_ACCESS_KEY,
